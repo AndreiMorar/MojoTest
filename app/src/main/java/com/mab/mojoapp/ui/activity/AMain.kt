@@ -126,6 +126,7 @@ class AMain : AppCompatActivity() {
         hideForm()
         vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
         checkListEmptiness()
+        tvRetry.visibility = View.GONE
     }
 
     fun populateUI(items: Members) {
