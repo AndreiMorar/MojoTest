@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ScrollView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import com.mab.mmhomework.network.TStatus
 import com.mab.mojoapp.R
@@ -17,6 +18,7 @@ import com.mab.mojoapp.extensions.afterTextChanged
 import com.mab.mojoapp.network.entities.Member
 import com.mab.mojoapp.network.entities.Members
 import com.mab.mojoapp.storage.MembersStorage
+import com.mab.mojoapp.ui.customviews.IObservableScrollView
 import com.mab.mojoapp.utils.Utils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.a_main.*
@@ -29,8 +31,15 @@ class AMain : AppCompatActivity() {
 
     private val _viewModel: AMainViewModel by viewModels()
 
+    private lateinit var draggableHighlight: View
+    private var highlightPos = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        draggableHighlight =
+            LayoutInflater.from(this).inflate(R.layout.draggable_highlighter, vScrollView, false)
+
         _binding = AMainBinding.inflate(layoutInflater)
         setContentView(_binding.root)
 
@@ -41,6 +50,8 @@ class AMain : AppCompatActivity() {
         loadData()
 
         setupForm()
+
+        setupDraggable()
 
     }
 
@@ -182,6 +193,12 @@ class AMain : AppCompatActivity() {
                 moveDownMember((it.parent as View).parent as View)
             }
 
+            setOnLongClickListener {
+                vScrollView.isInDragMode(true)
+                startDraggingView(it)
+                true
+            }
+
             _binding.vList.addView(this)
         }
     }
@@ -223,6 +240,56 @@ class AMain : AppCompatActivity() {
 
     fun scrollViewToBottom() {
         vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
+    }
+
+    fun startDraggingView(view: View) {
+        vList.removeView(view)
+        vDraggable.addView(view)
+    }
+
+    fun setupDraggable() {
+        vScrollView.setListener(object : IObservableScrollView {
+            override fun onScrolledY(y: Float, scrollY: Int) {
+                val position = getPosition(y, scrollY)
+
+                if (highlightPos != position) {
+                    vList.removeView(draggableHighlight)
+                    highlightPos = position
+                    println("LIST ITEMS before: ${vList.childCount}")
+                    vList.addView(draggableHighlight, position)
+                    println("LIST ITEMS after: ${vList.childCount}")
+                }
+
+                vDraggable.y = y
+            }
+
+            override fun onDragEnded(y: Float, scrollY: Int) {
+                println("SCROLL Y :: $scrollY")
+                vList.removeView(draggableHighlight)
+                val view = vDraggable.get(0)
+                vDraggable.removeAllViews()
+                val position = getPosition(y, scrollY)
+                vList.addView(view, position)
+
+            }
+        })
+    }
+
+    fun getPosition(y: Float, scrollY: Int):Int{
+        var yOnSCreenPos: Int = y.toInt()
+        val itemH = vDraggable.height
+        val scrollViewH = vScrollView.height
+
+        if (yOnSCreenPos <= 0) yOnSCreenPos = 0
+        if (yOnSCreenPos >= scrollViewH) yOnSCreenPos = scrollViewH
+
+        val percentYScrollView = yOnSCreenPos.toFloat() / scrollViewH.toFloat()
+        var posInScrollViewY = scrollViewH * percentYScrollView
+
+        posInScrollViewY += scrollY
+
+        val position = Math.round(posInScrollViewY / itemH)
+        return position
     }
 
 }

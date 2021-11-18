@@ -15,7 +15,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <com.mab.mojoapp.ui.customviews.ObservableScrollView
         android:id="@+id/vScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -35,7 +35,27 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </com.mab.mojoapp.ui.customviews.ObservableScrollView>
+
+    <RelativeLayout
+        android:id="@+id/vDraggableContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/vBottom"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/vDraggable"
+            android:alpha="0.5"
+            android:background="#FB4141"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tvRetry"
