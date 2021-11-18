@@ -1,12 +1,14 @@
 package com.mab.mojoapp.ui.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ScrollView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
 import androidx.lifecycle.Observer
 import com.mab.mmhomework.network.TStatus
 import com.mab.mojoapp.R
@@ -81,11 +83,28 @@ class AMain : AppCompatActivity() {
     fun showForm() {
         clearForm()
         _binding.vForm.visibility = View.VISIBLE
+        with(_binding.etName) {
+            requestFocus()
+            showKeyboard(this)
+        }
+    }
+
+    fun showKeyboard(et: EditText) {
+        val imm: InputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    fun hideKeyboard() {
+        val inputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
     fun hideForm() {
         _binding.vForm.visibility = View.GONE
         clearForm()
+        hideKeyboard()
     }
 
     fun clearForm() {
@@ -102,7 +121,7 @@ class AMain : AppCompatActivity() {
             hideForm()
         }
         _binding.tvAdd.setOnClickListener {
-            addMemberFromForm()
+            persistMember()
         }
         _binding.etName.afterTextChanged { validateForm() }
         _binding.etPosition.afterTextChanged { validateForm() }
@@ -114,17 +133,17 @@ class AMain : AppCompatActivity() {
             etName.text.isNotEmpty() && etPosition.text.isNotEmpty() && etLocation.text.isNotEmpty()
     }
 
-    fun addMemberFromForm() {
+    fun persistMember() {
         val member = Member(
             etName.text.toString(),
             etPosition.text.toString(),
             etLocation.text.toString(),
-            "https://ptitchevreuil.github.io/mojo/francescu.jpg"
+            ""
         )
         MembersStorage.addMember(member)
         addMember(member)
         hideForm()
-        vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
+        scrollViewToBottom()
         checkListEmptiness()
         tvRetry.visibility = View.GONE
     }
@@ -134,6 +153,7 @@ class AMain : AppCompatActivity() {
         for (item in items) {
             addMember(item)
         }
+        checkListEmptiness()
     }
 
     fun addMember(item: Member) {
@@ -142,11 +162,13 @@ class AMain : AppCompatActivity() {
             tvNameAndPosition.text =
                 getString(R.string.item_name_and_position, item.name, item.position)
             tvLocation.text = getString(R.string.item_location, item.location)
-            if (item.pic != null && item.pic.isNotEmpty()) {
+            if (item.pic.isNotEmpty()) {
                 Picasso.get()
                     .load(item.pic)
                     .placeholder(R.drawable.ic_placeholder)
                     .into(ivAvatar)
+            } else {
+                ivAvatar.setImageResource(R.drawable.ic_placeholder)
             }
 
             tag = item
@@ -197,6 +219,10 @@ class AMain : AppCompatActivity() {
             vList.removeView(view)
             vList.addView(view, pos + 1)
         }
+    }
+
+    fun scrollViewToBottom() {
+        vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
     }
 
 }

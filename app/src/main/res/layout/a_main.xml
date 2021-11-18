@@ -90,19 +90,30 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_name" />
+                android:hint="@string/hint_name"
+                android:imeOptions="actionNext"
+                android:maxLines="1"
+                android:nextFocusDown="@id/etPosition"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/etPosition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_position" />
+                android:hint="@string/hint_position"
+                android:imeOptions="actionNext"
+                android:maxLines="1"
+                android:nextFocusDown="@id/etLocation"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/etLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_location" />
+                android:hint="@string/hint_location"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/tvAdd"
