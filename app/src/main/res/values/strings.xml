@@ -9,4 +9,11 @@
     <string name="status_error">Failed to retrieve Members</string>
     <string name="retry">RETRY</string>
 
+    <string name="add_member">Add Member</string>
+    <string name="nevermind">Nevermind</string>
+
+    <string name="hint_name">Name</string>
+    <string name="hint_position">Position</string>
+    <string name="hint_location">Location</string>
+
 </resources>

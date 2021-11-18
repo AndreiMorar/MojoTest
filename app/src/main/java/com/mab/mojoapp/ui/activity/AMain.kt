@@ -3,20 +3,22 @@ package com.mab.mojoapp.ui.activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ScrollView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.mab.mmhomework.network.TStatus
 import com.mab.mojoapp.R
 import com.mab.mojoapp.databinding.AMainBinding
+import com.mab.mojoapp.extensions.afterTextChanged
+import com.mab.mojoapp.network.entities.Member
 import com.mab.mojoapp.network.entities.Members
 import com.mab.mojoapp.storage.MembersStorage
-import com.mab.mojoapp.utils.UPersistence
 import com.mab.mojoapp.utils.Utils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.a_main.*
 import kotlinx.android.synthetic.main.item_member.view.*
-import java.lang.reflect.Member
+
 
 class AMain : AppCompatActivity() {
 
@@ -34,6 +36,8 @@ class AMain : AppCompatActivity() {
         }
 
         loadData()
+
+        setupForm();
 
     }
 
@@ -69,26 +73,78 @@ class AMain : AppCompatActivity() {
     }
 
     fun showError() {
-        tvStatus.setText(R.string.status_error)
-        tvRetry.visibility = View.VISIBLE
+        _binding.tvStatus.setText(R.string.status_error)
+        _binding.tvRetry.visibility = View.VISIBLE
+    }
+
+    fun showForm() {
+        clearForm()
+        _binding.vForm.visibility = View.VISIBLE
+    }
+
+    fun hideForm() {
+        _binding.vForm.visibility = View.GONE
+        clearForm()
+    }
+
+    fun clearForm() {
+        _binding.etName.setText("")
+        _binding.etPosition.setText("")
+        _binding.etLocation.setText("")
+    }
+
+    fun setupForm() {
+        _binding.tvAddMember.setOnClickListener {
+            showForm()
+        }
+        _binding.tvNevermind.setOnClickListener {
+            hideForm()
+        }
+        _binding.tvAdd.setOnClickListener {
+            addMemberFromForm()
+        }
+        _binding.etName.afterTextChanged { validateForm() }
+        _binding.etPosition.afterTextChanged { validateForm() }
+        _binding.etLocation.afterTextChanged { validateForm() }
+    }
+
+    fun validateForm() {
+        _binding.tvAdd.isClickable =
+            etName.text.isNotEmpty() && etPosition.text.isNotEmpty() && etLocation.text.isNotEmpty()
+    }
+
+    fun addMemberFromForm() {
+        val member = Member(
+            etName.text.toString(),
+            etPosition.text.toString(),
+            etLocation.text.toString(),
+            "https://ptitchevreuil.github.io/mojo/francescu.jpg"
+        )
+        MembersStorage.addMember(member)
+        addMember(member)
+        hideForm()
+        vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
     }
 
     fun populateUI(items: Members) {
         _binding.vList.removeAllViews() //just to be safe
-        val inflater = LayoutInflater.from(this)
         for (item in items) {
-            inflater.inflate(R.layout.item_member, _binding.vList, false).apply {
-                tvNameAndPosition.text =
-                    getString(R.string.item_name_and_position, item.name, item.position)
-                tvLocation.text = getString(R.string.item_location, item.location)
-                Picasso.get()
-                    .load(item.pic)
-                    .placeholder(R.drawable.ic_placeholder)
-                    .into(ivAvatar)
+            addMember(item)
+        }
+    }
 
-                _binding.vList.addView(this)
-            }
+    fun addMember(item: Member) {
+        val inflater = LayoutInflater.from(this)
+        inflater.inflate(R.layout.item_member, _binding.vList, false).apply {
+            tvNameAndPosition.text =
+                getString(R.string.item_name_and_position, item.name, item.position)
+            tvLocation.text = getString(R.string.item_location, item.location)
+            Picasso.get()
+                .load(item.pic)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(ivAvatar)
 
+            _binding.vList.addView(this)
         }
     }
 

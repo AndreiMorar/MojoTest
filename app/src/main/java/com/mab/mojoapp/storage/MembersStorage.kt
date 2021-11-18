@@ -30,5 +30,14 @@ object MembersStorage {
         return Members()
     }
 
+    fun addMember(member: com.mab.mojoapp.network.entities.Member) {
+        var members = Members()
+        if (haveInitialized()){
+            members = getAll()
+        }
+        members.add(member)
+        store(members)
+    }
+
 
 }
