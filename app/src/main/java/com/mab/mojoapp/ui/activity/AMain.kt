@@ -12,6 +12,7 @@ import com.mab.mojoapp.databinding.AMainBinding
 import com.mab.mojoapp.network.entities.Members
 import com.mab.mojoapp.storage.MembersStorage
 import com.mab.mojoapp.utils.UPersistence
+import com.mab.mojoapp.utils.Utils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.a_main.*
 import kotlinx.android.synthetic.main.item_member.view.*
@@ -28,23 +29,48 @@ class AMain : AppCompatActivity() {
         _binding = AMainBinding.inflate(layoutInflater)
         setContentView(_binding.root)
 
-        if (MembersStorage.haveInitialized()) {
-            //TODO:
-        } else {
-            _viewModel.membersLiveData.observe(this@AMain, Observer { resp ->
-                when (resp.status) {
-                    TStatus.LOADING -> tvStatus.setText(R.string.status_loading)
-                    TStatus.SUCCESS -> {
-                        tvStatus.text = ""
-                        populateUI(resp.data ?: Members())
-                    }
-                    TStatus.ERROR -> tvStatus.setText(R.string.status_error)
-                }
-                println("RESP :: ${resp.status} | ${resp.data}")
-            })
-            _viewModel.getMembers()
+        _binding.tvRetry.setOnClickListener {
+            loadData()
         }
 
+        loadData()
+
+    }
+
+    fun loadData() {
+        tvStatus.text = ""
+        tvRetry.visibility = View.GONE
+        val haveInitialized = MembersStorage.haveInitialized()
+        println("Loading from :: ${Utils.isNetworkConnected(this)}")
+        if (!Utils.isNetworkConnected(this) && !haveInitialized) {
+            println("Loading from :: NO NETWORK NOR LOCAL STORAGE")
+            showError()
+        } else
+            if (haveInitialized) {
+                println("Loading from :: local storage")
+                populateUI(MembersStorage.getAll())
+            } else {
+                println("Loading from :: API")
+                _viewModel.membersLiveData.observe(this@AMain, Observer { resp ->
+                    when (resp.status) {
+                        TStatus.LOADING -> tvStatus.setText(R.string.status_loading)
+                        TStatus.SUCCESS -> {
+                            tvStatus.text = ""
+                            resp.data?.apply {
+                                MembersStorage.store(this)
+                                populateUI(this)
+                            }
+                        }
+                        TStatus.ERROR -> showError()
+                    }
+                })
+                _viewModel.getMembers()
+            }
+    }
+
+    fun showError() {
+        tvStatus.setText(R.string.status_error)
+        tvRetry.visibility = View.VISIBLE
     }
 
     fun populateUI(items: Members) {

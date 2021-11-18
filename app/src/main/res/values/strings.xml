@@ -7,5 +7,6 @@
 
     <string name="status_loading">Loading Members...</string>
     <string name="status_error">Failed to retrieve Members</string>
+    <string name="retry">RETRY</string>
 
 </resources>

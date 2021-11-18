@@ -1,6 +1,7 @@
 package com.mab.mojoapp.network.entities
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class Members : ArrayList<Member>()
 
@@ -13,4 +14,4 @@ class Member(
     val location: String,
     @SerializedName("pic")
     val pic: String
-)
+) : Serializable
