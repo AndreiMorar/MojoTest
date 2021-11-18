@@ -3,6 +3,7 @@ package com.mab.mojoapp.ui.activity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.mab.mojoapp.databinding.AMainBinding
 
 class AMain : AppCompatActivity() {
@@ -15,6 +16,12 @@ class AMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = AMainBinding.inflate(layoutInflater)
         setContentView(_binding.root)
+
+        _viewModel.membersLiveData.observe(this@AMain, Observer { resp ->
+            println("RESP :: ${resp.status} | ${resp.data}")
+        })
+
+        _viewModel.getMembers()
 
 
     }
