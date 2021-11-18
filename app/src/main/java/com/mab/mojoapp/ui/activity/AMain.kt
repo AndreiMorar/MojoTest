@@ -38,7 +38,7 @@ class AMain : AppCompatActivity() {
 
         loadData()
 
-        setupForm();
+        setupForm()
 
     }
 
@@ -152,6 +152,12 @@ class AMain : AppCompatActivity() {
             ivRemove.setOnClickListener {
                 removeMember(it.parent as View)
             }
+            tvMoveUp.setOnClickListener {
+                moveUpMember((it.parent as View).parent as View)
+            }
+            tvMoveDown.setOnClickListener {
+                moveDownMember((it.parent as View).parent as View)
+            }
 
             _binding.vList.addView(this)
         }
@@ -167,8 +173,28 @@ class AMain : AppCompatActivity() {
     fun checkListEmptiness() {
         if (_binding.vList.childCount == 0) {
             _binding.tvStatus.setText(R.string.nothing_to_show)
-        }else{
+        } else {
             _binding.tvStatus.text = ""
+        }
+    }
+
+    fun moveUpMember(view: View) {
+        val member: Member = view.tag as Member
+        MembersStorage.moveUp(member)
+        val pos = vList.indexOfChild(view)
+        if (pos - 1 >= 0) {
+            vList.removeView(view)
+            vList.addView(view, pos - 1)
+        }
+    }
+
+    fun moveDownMember(view: View) {
+        val member: Member = view.tag as Member
+        MembersStorage.moveDown(member)
+        val pos = vList.indexOfChild(view)
+        if (pos + 1 < vList.childCount) {
+            vList.removeView(view)
+            vList.addView(view, pos + 1)
         }
     }
 

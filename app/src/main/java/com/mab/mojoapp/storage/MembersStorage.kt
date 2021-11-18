@@ -50,5 +50,37 @@ object MembersStorage {
         store(members)
     }
 
+    fun moveUp(member: Member) {
+        val members = getAll()
+        var m: Member
+        for (i in 0..members.size) {
+            m = members[i]
+            if (m.isSame(member)) {
+                if (i - 1 >= 0) {
+                    members.remove(m)
+                    members.add(i - 1, m)
+                }
+                break
+            }
+        }
+        store(members)
+    }
+
+    fun moveDown(member: Member) {
+        val members = getAll()
+        var m: Member
+        for (i in 0..members.size) {
+            m = members[i]
+            if (m.isSame(member)) {
+                if (i + 1 < members.size) {
+                    members.remove(m)
+                    members.add(i + 1, m)
+                }
+                break
+            }
+        }
+        store(members)
+    }
+
 
 }
