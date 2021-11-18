@@ -7,11 +7,18 @@ class Members : ArrayList<Member>()
 
 class Member(
     @SerializedName("name")
-    val name: String,
+    val name: String = "",
     @SerializedName("position")
-    val position: String,
+    val position: String = "",
     @SerializedName("location")
-    val location: String,
+    val location: String = "",
     @SerializedName("pic")
-    val pic: String
-) : Serializable
+    val pic: String = ""
+) : Serializable {
+    fun isSame(member: Member): Boolean {
+        return member.name.equals(name)
+                && member.position.equals(position)
+                && member.location.equals(location)
+                && member.pic.equals(pic)
+    }
+}

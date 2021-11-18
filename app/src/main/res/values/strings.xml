@@ -8,6 +8,7 @@
     <string name="status_loading">Loading Members...</string>
     <string name="status_error">Failed to retrieve Members</string>
     <string name="retry">RETRY</string>
+    <string name="nothing_to_show">Oups ... no more members </string>
 
     <string name="add_member">Add Member</string>
     <string name="nevermind">Nevermind</string>
@@ -15,5 +16,9 @@
     <string name="hint_name">Name</string>
     <string name="hint_position">Position</string>
     <string name="hint_location">Location</string>
+
+    <string name="remove">Remove</string>
+    <string name="up">UP</string>
+    <string name="down">DOWN</string>
 
 </resources>

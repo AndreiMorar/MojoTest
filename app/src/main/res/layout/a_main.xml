@@ -16,11 +16,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/vScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/vBottom"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/vScrollView"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -51,7 +51,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStatus" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/vBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +70,10 @@
             android:padding="10dp"
             android:text="@string/add_member"
             android:textColor="#1161D8"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <LinearLayout
             android:id="@+id/vForm"
@@ -78,7 +81,10 @@
             android:layout_height="wrap_content"
             android:background="#D5D5D5"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
             <EditText
                 android:id="@+id/etName"
@@ -129,6 +135,6 @@
                 app:layout_constraintRight_toRightOf="parent" />
 
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

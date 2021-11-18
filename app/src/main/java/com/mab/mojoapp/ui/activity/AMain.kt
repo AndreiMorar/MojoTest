@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ScrollView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.lifecycle.Observer
 import com.mab.mmhomework.network.TStatus
 import com.mab.mojoapp.R
@@ -124,6 +125,7 @@ class AMain : AppCompatActivity() {
         addMember(member)
         hideForm()
         vScrollView.post(Runnable { vScrollView.fullScroll(ScrollView.FOCUS_DOWN) })
+        checkListEmptiness()
     }
 
     fun populateUI(items: Members) {
@@ -139,12 +141,34 @@ class AMain : AppCompatActivity() {
             tvNameAndPosition.text =
                 getString(R.string.item_name_and_position, item.name, item.position)
             tvLocation.text = getString(R.string.item_location, item.location)
-            Picasso.get()
-                .load(item.pic)
-                .placeholder(R.drawable.ic_placeholder)
-                .into(ivAvatar)
+            if (item.pic != null && item.pic.isNotEmpty()) {
+                Picasso.get()
+                    .load(item.pic)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .into(ivAvatar)
+            }
+
+            tag = item
+            ivRemove.setOnClickListener {
+                removeMember(it.parent as View)
+            }
 
             _binding.vList.addView(this)
+        }
+    }
+
+    fun removeMember(view: View) {
+        val member: Member = view.tag as Member
+        MembersStorage.remove(member)
+        _binding.vList.removeView(view)
+        checkListEmptiness()
+    }
+
+    fun checkListEmptiness() {
+        if (_binding.vList.childCount == 0) {
+            _binding.tvStatus.setText(R.string.nothing_to_show)
+        }else{
+            _binding.tvStatus.text = ""
         }
     }
 

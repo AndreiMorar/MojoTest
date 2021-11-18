@@ -3,9 +3,9 @@ package com.mab.mojoapp.storage
 import android.provider.MediaStore
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.mab.mojoapp.network.entities.Member
 import com.mab.mojoapp.network.entities.Members
 import com.mab.mojoapp.utils.UPersistence
-import java.lang.reflect.Member
 
 /**
  * @author MAB
@@ -30,12 +30,23 @@ object MembersStorage {
         return Members()
     }
 
-    fun addMember(member: com.mab.mojoapp.network.entities.Member) {
+    fun addMember(member: Member) {
         var members = Members()
-        if (haveInitialized()){
+        if (haveInitialized()) {
             members = getAll()
         }
         members.add(member)
+        store(members)
+    }
+
+    fun remove(member: Member) {
+        val members = getAll()
+        for (m in members) {
+            if (m.isSame(member)) {
+                members.remove(m)
+                break
+            }
+        }
         store(members)
     }
 
