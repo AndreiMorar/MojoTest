@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">MojoApp</string>
+
+    <string name="item_name_and_position">%1$s | %2$s</string>
+    <string name="item_location">Location: %1$s</string>
+
+
+    <string name="status_loading">Loading Members...</string>
+    <string name="status_error">Failed to retrieve Members</string>
+
 </resources>
